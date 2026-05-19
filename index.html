@@ -505,18 +505,38 @@ function drawWorldBounds() {
 }
 
 function drawFood(food) {
-  const p = worldToScreen(food.x, food.y);
-  const r = food.radius * camera.zoom * (1 + Math.sin(frame * .04 + food.pulse) * .12);
+  if (isPlayer) {
 
-  if (p.x < -40 || p.x > width + 40 || p.y < -40 || p.y > height + 40) return;
+  const img = new Image();
+  img.src = "B9C8EE0A-141F-49CF-ABDA-6D725EB68953";
 
   ctx.save();
-  ctx.shadowBlur = 14;
-  ctx.shadowColor = `hsl(${food.hue}, 100%, 65%)`;
-  ctx.fillStyle = `hsla(${food.hue}, 100%, 66%, .92)`;
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  ctx.drawImage(img, p.x - r, p.y - r, r * 2, r * 2);
+
+  ctx.restore();
+
+} else {
+
+  const body = ctx.createRadialGradient(p.x - r * .35, p.y - r * .35, r * .2, p.x, p.y, r);
+
+  body.addColorStop(0, "rgba(255,255,255,.95)");
+  body.addColorStop(.18, `hsla(${cell.hue},100%,76%,.95)`);
+  body.addColorStop(1, `hsla(${cell.hue},100%,38%,.96)`);
+
+  ctx.shadowBlur = 22;
+  ctx.shadowColor = `hsl(${cell.hue},100%,60%)`;
+  ctx.fillStyle = body;
+
   ctx.beginPath();
   ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
   ctx.fill();
+}
   ctx.restore();
 }
 
